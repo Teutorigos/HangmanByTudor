@@ -1,0 +1,34 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Hangman Game";
+}
+
+<h1>Hangman</h1>
+
+<div style="font-size: 2em; letter-spacing: 10px; margin: 20px 0;">
+    @foreach (char c in Model.Game.SecretWord)
+    {
+        @(Model.Game.GuessedLetters.Contains(c) ? c : '_')
+    }
+</div>
+
+<p>Lives remaining: @Model.Game.Lives</p>
+
+<form method="post" asp-page-handler="Guess">
+    @for (char c = 'A'; c <= 'Z'; c++)
+    {
+        <button type="submit" name="letter" value="@c"
+                disabled="@(Model.Game.GuessedLetters.Contains(c) || Model.Game.IsGameOver)">
+            @c
+        </button>
+    }
+</form>
+
+@if (Model.Game.IsGameOver)
+{
+    <h2>@(Model.Game.IsWinner ? "You Won!" : "Game Over!")</h2>
+    <form method="post" asp-page-handler="Reset">
+        <button type="submit" class="btn btn-primary">Play Again</button>
+    </form>
+}

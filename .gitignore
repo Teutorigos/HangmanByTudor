@@ -1,0 +1,7 @@
+# Visual Studio / IDE specific
+.vs/
+*.user
+
+# Build output and temporary files
+bin/
+obj/
