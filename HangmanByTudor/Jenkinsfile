@@ -10,12 +10,12 @@ pipeline {
         stage('Build') { 
             steps {
                 // We specify to make build at the solution
-                sh 'dotnet build HangmanByTudor.sln'
+                sh 'dotnet build HangmanByTudor/HangmanByTudor.sln'
             }
         }
         stage('Test') { 
             steps {
-                sh 'dotnet test HangmanByTudor.sln'
+                sh 'dotnet test HangmanByTudor/HangmanByTudor.sln'
             }
         }
     }
