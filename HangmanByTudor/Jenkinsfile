@@ -15,6 +15,7 @@ pipeline {
         }
         stage('Test') { 
             steps {
+                //Specify the solution similarly to build
                 sh 'dotnet test HangmanByTudor/HangmanByTudor.sln'
             }
         }
