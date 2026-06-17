@@ -21,13 +21,13 @@ pipeline {
             steps {
                 echo 'Running automated tests...'
                 // --no-build assures that we don't compile again if the build already passed
-                sh "dotnet test ${SOLUTION_PATH} --configuration Release --no-build --logger \"junit;MethodFormat=Class;FailureBodyFormat=Verbose\""            }
+                sh "dotnet test ${SOLUTION_PATH} --configuration Release --no-build --logger 'trx;LogFileName=test-results.trx'"
         }
     }
     post {
         always {
             // Archiving test results to see them in Jenkins UI
-            junit '**/test-results.xml'
+            mstest testResultsFile: '**/test-results.trx', keepLongStdio: true
         }
         failure {
             echo 'Build or tests failed. Check logs!'
