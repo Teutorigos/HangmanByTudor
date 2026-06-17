@@ -6,18 +6,32 @@ pipeline {
             args '-u root -e DOTNET_CLI_HOME=/tmp -e DOTNET_NOLOGO=1'
         }
     }
+    environment {
+        // Setting the solution path
+        SOLUTION_PATH = 'HangmanByTudor/HangmanByTudor.sln'
+    }
     stages {
         stage('Build') { 
             steps {
-                // We specify to make build at the solution
-                sh 'dotnet build HangmanByTudor/HangmanByTudor.sln'
+                echo 'Compiling...'
+                sh "dotnet build ${SOLUTION_PATH} --configuration Release"
             }
         }
         stage('Test') { 
             steps {
-                //Specify the solution similarly to build
-                sh 'dotnet test HangmanByTudor/HangmanByTudor.sln'
+                echo 'Running automated tests...'
+                // --no-build assures that we don't compile again if the build already passed
+                sh "dotnet test ${SOLUTION_PATH} --configuration Release --no-build --logger 'junit;LogFilePath=test-results.xml'"
             }
+        }
+    }
+    post {
+        always {
+            // Archiving test results to see them in Jenkins UI
+            junit '**/test-results.xml'
+        }
+        failure {
+            echo 'Build or tests failed. Check logs!'
         }
     }
 }
