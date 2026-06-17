@@ -19,16 +19,15 @@ pipeline {
         }
         stage('Test') { 
             steps {
-                sh "dotnet test ${SOLUTION_PATH} --configuration Release --no-build --logger 'trx;LogFileName=test-results.trx'"
-                // Adaug? aceast? linie pentru a schimba permisiunile fi?ierului
-                sh "chmod 644 **/test-results.trx" 
+                echo 'Running automated tests...'
+                sh "dotnet test ${SOLUTION_PATH} --configuration Release --no-build --logger 'junit;LogFilePath=test-results.xml'"            
             }
         }
     }
     post {
         always {
             // Archiving test results to see them in Jenkins UI
-            mstest testResultsFile: '**/test-results.trx', keepLongStdio: true
+            junit '**/test-results.xml'
         }
         failure {
             echo 'Build or tests failed. Check logs!'
