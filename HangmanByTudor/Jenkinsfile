@@ -22,6 +22,7 @@ pipeline {
                 echo 'Running automated tests...'
                 // --no-build assures that we don't compile again if the build already passed
                 sh "dotnet test ${SOLUTION_PATH} --configuration Release --no-build --logger 'trx;LogFileName=test-results.trx'"
+            }
         }
     }
     post {
