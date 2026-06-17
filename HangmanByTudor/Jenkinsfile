@@ -21,8 +21,7 @@ pipeline {
             steps {
                 echo 'Running automated tests...'
                 // --no-build assures that we don't compile again if the build already passed
-                sh "dotnet test ${SOLUTION_PATH} --configuration Release --no-build --logger 'junit;LogFilePath=test-results.xml'"
-            }
+                sh "dotnet test ${SOLUTION_PATH} --configuration Release --no-build --logger \"junit;MethodFormat=Class;FailureBodyFormat=Verbose\""            }
         }
     }
     post {
