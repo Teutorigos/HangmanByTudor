@@ -16,7 +16,7 @@ COPY ["HangmanByTudor/HangmanByTudor.sln", "./"]
 COPY ["HangmanByTudor/HangmanByTudor.csproj", "HangmanByTudor/"]
 RUN dotnet restore "HangmanByTudor/HangmanByTudor.csproj"
 COPY . .
-WORKDIR "/src/HangmanByTudor"
+WORKDIR "/src"
 RUN dotnet build "HangmanByTudor/HangmanByTudor.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
