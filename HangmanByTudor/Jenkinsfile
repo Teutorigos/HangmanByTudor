@@ -22,7 +22,7 @@ pipeline {
         stage('Docker Build') { 
             steps {
                 echo 'Building Docker image...'
-                sh "docker build -t hangman-game:latest ."
+                sh "docker build -f HangmanByTudor/Dockerfile -t hangman-game:latest ."
             }
         }
     }
