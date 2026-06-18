@@ -14,7 +14,7 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["HangmanByTudor/HangmanByTudor.sln", "./"]
 COPY ["HangmanByTudor/HangmanByTudor.csproj", "HangmanByTudor/"]
-RUN dotnet restore ".HangmanByTudor/HangmanByTudor.csproj"
+RUN dotnet restore "HangmanByTudor/HangmanByTudor.csproj"
 COPY . .
 WORKDIR "/src/HangmanByTudor."
 RUN dotnet build "/HangmanByTudor.csproj" -c $BUILD_CONFIGURATION -o /app/build
