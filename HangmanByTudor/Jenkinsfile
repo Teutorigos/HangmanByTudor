@@ -6,16 +6,19 @@ pipeline {
         SOLUTION_PATH = 'HangmanByTudor/HangmanByTudor.sln'
     }
     stages {
-        stage('Build') { 
+        stage('Build & Test') { 
+            // We must force here to use .NET
+            agent {
+                docker { 
+                    image 'mcr.microsoft.com/dotnet/sdk:9.0'
+                    args '-u root -e DOTNET_CLI_HOME=/tmp -e DOTNET_NOLOGO=1'
+                }
+            }
             steps {
                 echo 'Compiling...'
                 sh "dotnet build ${SOLUTION_PATH} --configuration Release"
-            }
-        }
-        stage('Test') { 
-            steps {
                 echo 'Running automated tests...'
-                sh "dotnet test ${SOLUTION_PATH} --configuration Release --no-build --logger 'junit;LogFilePath=test-results.xml'"            
+                sh "dotnet test ${SOLUTION_PATH} --configuration Release --no-build --logger 'junit;LogFilePath=test-results.xml'"
             }
         }
         stage('Docker Build') { 
