@@ -2,31 +2,33 @@ pipeline {
     agent any
 
     environment {
-        // Setting the solution path
         SOLUTION_PATH = 'HangmanByTudor/HangmanByTudor.sln'
+        // Set variables
+        DOTNET_ROOT = '/home/vboxuser/.dotnet'
+        PATH = "$PATH:/home/vboxuser/.dotnet:/home/vboxuser/.dotnet/tools"
     }
+
     stages {
         stage('Build & Test') { 
             steps {
                 echo 'Compiling...'
-                sh 'export DOTNET_ROOT=/home/vboxuser/.dotnet; export PATH=$PATH:$DOTNET_ROOT:$DOTNET_ROOT/tools; dotnet build HangmanByTudor/HangmanByTudor.sln --configuration Release'                
-
+                sh "dotnet build ${SOLUTION_PATH} --configuration Release"
+                
                 echo 'Running automated tests...'
-                sh 'export DOTNET_ROOT=/home/vboxuser/.dotnet; export PATH=$PATH:$DOTNET_ROOT:$DOTNET_ROOT/tools; dotnet test HangmanByTudor/HangmanByTudor.sln --configuration Release --no-build --logger "junit;LogFilePath=test-results.xml"'            }
+                sh "dotnet test ${SOLUTION_PATH} --configuration Release --no-build --logger 'junit;LogFilePath=test-results.xml'"
+            }
         }
+        
         stage('Docker Build') { 
             steps {
-                script {
-                    // Build image using Dockerfile
-                    echo 'Building Docker image...'
-                    dockerImage = docker.build("hangman-game:latest")
-                }
+                echo 'Building Docker image...'
+                sh "docker build -t hangman-game:latest ."
             }
         }
     }
+    
     post {
         always {
-            // Archiving test results to see them in Jenkins UI
             junit '**/test-results.xml'
         }
         failure {
