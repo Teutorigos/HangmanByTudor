@@ -4,8 +4,8 @@ pipeline {
     environment {
         SOLUTION_PATH = 'HangmanByTudor/HangmanByTudor.sln'
         // Set variables
-        DOTNET_ROOT = '/home/vboxuser/.dotnet'
-        PATH = "${env.PATH}:/home/vboxuser/.dotnet:/home/vboxuser/.dotnet/tools"
+        DOTNET_ROOT = '/opt/dotnet'
+        PATH = "${env.PATH}:/opt/dotnet:/opt/dotnet/tools"
     }
 
     stages {
