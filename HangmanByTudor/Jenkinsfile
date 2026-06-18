@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent none
 
     environment {
         // Setting the solution path
@@ -22,6 +22,7 @@ pipeline {
             }
         }
         stage('Docker Build') { 
+            agent { label 'built-in' }
             steps {
                 script {
                     // Build image using Dockerfile
