@@ -12,16 +12,17 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["HangmanByTudor.csproj", "."]
-RUN dotnet restore "./HangmanByTudor.csproj"
+COPY ["HangmanByTudor/HangmanByTudor.sln", "./"]
+COPY ["HangmanByTudor/HangmanByTudor.csproj", "HangmanByTudor/"]
+RUN dotnet restore ".HangmanByTudor/HangmanByTudor.csproj"
 COPY . .
-WORKDIR "/src/."
-RUN dotnet build "./HangmanByTudor.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/HangmanByTudor."
+RUN dotnet build "/HangmanByTudor.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./HangmanByTudor.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "HangmanByTudor.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final

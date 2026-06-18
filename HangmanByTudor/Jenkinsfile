@@ -23,6 +23,14 @@ pipeline {
                 sh "dotnet test ${SOLUTION_PATH} --configuration Release --no-build --logger 'junit;LogFilePath=test-results.xml'"            
             }
         }
+        stage('Docker Build') { 
+            steps {
+                script {
+                    // Build image using Dockerfile
+                    dockerImage = docker.build("hangman-game:latest")
+                }
+            }
+        }
     }
     post {
         always {
