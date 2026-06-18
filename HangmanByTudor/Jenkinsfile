@@ -1,5 +1,5 @@
 pipeline {
-    agent none
+    agent any
 
     environment {
         // Setting the solution path
@@ -7,13 +7,6 @@ pipeline {
     }
     stages {
         stage('Build & Test') { 
-            // We must force here to use .NET
-            agent {
-                docker { 
-                    image 'mcr.microsoft.com/dotnet/sdk:9.0'
-                    args '-u root -e DOTNET_CLI_HOME=/tmp -e DOTNET_NOLOGO=1'
-                }
-            }
             steps {
                 echo 'Compiling...'
                 sh "dotnet build ${SOLUTION_PATH} --configuration Release"
@@ -22,7 +15,6 @@ pipeline {
             }
         }
         stage('Docker Build') { 
-            agent { label 'built-in' }
             steps {
                 script {
                     // Build image using Dockerfile
