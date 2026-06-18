@@ -1,11 +1,6 @@
 pipeline {
-    agent {
-        docker { 
-            image 'mcr.microsoft.com/dotnet/sdk:9.0'
-            // This line sets working folders and cache in an accessible area
-            args '-u root -e DOTNET_CLI_HOME=/tmp -e DOTNET_NOLOGO=1'
-        }
-    }
+    agent any
+
     environment {
         // Setting the solution path
         SOLUTION_PATH = 'HangmanByTudor/HangmanByTudor.sln'
@@ -27,6 +22,7 @@ pipeline {
             steps {
                 script {
                     // Build image using Dockerfile
+                    echo 'Building Docker image...'
                     dockerImage = docker.build("hangman-game:latest")
                 }
             }
