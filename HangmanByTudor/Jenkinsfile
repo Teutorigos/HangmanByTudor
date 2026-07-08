@@ -22,7 +22,9 @@ pipeline {
         stage('Docker Build') { 
             steps {
                 echo 'Building Docker image...'
-                sh "docker build -f HangmanByTudor/Dockerfile -t hangman-game:latest ."
+                def dockerEnv = sh(script: 'minikube docker-env', returnStdout: true)
+                // sh "docker build -f HangmanByTudor/Dockerfile -t hangman-game:latest ."
+                sh 'eval $(minikube docker-env) && docker build -f HangmanByTudor/Dockerfile -t hangman-game:latest .'
             }
         }
 
