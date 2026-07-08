@@ -26,12 +26,11 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    sh 'minikube image load hangman-game:latest'
+                    sh 'minikube image load hangman-game:latest --profile minikube'
                     
                     withEnv(['KUBECONFIG=/home/vboxuser/.kube/config']) {
                         sh 'kubectl apply -f k8s-deployment.yaml'
                         sh 'kubectl rollout restart deployment/hangman-deployment'
-                        sh 'kubectl rollout status deployment/hangman-deployment'
                     }
                 }
             }
