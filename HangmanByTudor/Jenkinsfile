@@ -21,9 +21,12 @@ pipeline {
         stage('Docker Build') { 
             steps {
                 echo 'Building Docker image...'
-                script {
-                    sh 'eval $(minikube docker-env) && docker build -f HangmanByTudor/Dockerfile -t hangman-game:latest .'
-                }
+                // Build image locally on the station where Jenkins is running
+                sh 'docker build -f HangmanByTudor/Dockerfile -t hangman-game:latest .'
+        
+                echo 'Pushing image to Minikube...'
+                // Load image directly in MiniKube
+                sh 'minikube image load hangman-game:latest'
             }
         }
 
