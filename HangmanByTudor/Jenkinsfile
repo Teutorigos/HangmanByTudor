@@ -20,21 +20,28 @@ pipeline {
         
         stage('Docker Build') { 
             steps {
-                echo 'Building Docker image...'
-                // Build image locally on the station where Jenkins is running
-                sh 'docker build -f HangmanByTudor/Dockerfile -t hangman-game:latest .'
-        
-                echo 'Pushing image to Minikube...'
-                // Load image directly in MiniKube
-                sh 'minikube image load hangman-game:latest'
+                script {
+                    echo 'Building Docker image...'
+                    sh 'docker build -f HangmanByTudor/Dockerfile -t hangman-game:latest .'
+            
+                    echo 'Saving image to file...'
+                    sh 'docker save hangman-game:latest > hangman-image.tar'
+                }
             }
         }
 
         stage('Deploy to Kubernetes') {
             steps {
-                withEnv(['KUBECONFIG=/var/lib/jenkins/.kube/config', 'MINIKUBE_HOME=/var/lib/jenkins']){
-                    sh 'kubectl apply -f k8s-deployment.yaml'
-                    sh 'kubectl rollout status deployment/hangman-deployment'
+                script {
+                    // Loading image in Minikube using sudo to see the cluster
+                    // As we are in Deploy, we can use sudo to access the local user's resources
+                    // Did so because Jenkins could not see MiniKube
+                    sh 'sudo minikube image load hangman-image.tar -p minikube'
+            
+                    withEnv(['KUBECONFIG=/var/lib/jenkins/.kube/config']) {
+                        sh 'kubectl apply -f k8s-deployment.yaml'
+                        sh 'kubectl rollout status deployment/hangman-deployment'
+                    }
                 }
             }
         }
