@@ -12,7 +12,6 @@ pipeline {
             steps {
                 echo 'Compiling...'
                 sh "dotnet build ${SOLUTION_PATH} --configuration Release"
-                
                 echo 'Running automated tests...'
                 sh "dotnet test ${SOLUTION_PATH} --configuration Release --no-build --logger 'junit;LogFilePath=test-results.xml'"
             }
@@ -21,26 +20,21 @@ pipeline {
         stage('Docker Build') { 
             steps {
                 script {
-                    echo 'Building Docker image...'
+                    echo 'Building image for local Docker AND Minikube...'
+                    // Local build. To have it in local Docker
                     sh 'docker build -f HangmanByTudor/Dockerfile -t hangman-game:latest .'
-            
-                    echo 'Saving image to file...'
-                    sh 'docker save hangman-game:latest > hangman-image.tar'
+                    
+                    // Build in MiniKube.
+                    sh 'eval $(minikube docker-env) && docker build -f HangmanByTudor/Dockerfile -t hangman-game:latest .'
                 }
             }
         }
 
         stage('Deploy to Kubernetes') {
             steps {
-                script {
-                    // Loading image in Minikube using sudo to see the cluster
-                    // Did so because Jenkins could not see MiniKube
-                    sh 'minikube image load hangman-image.tar -p minikube'
-            
-                withEnv(['MINIKUBE_HOME=/home/vboxuser', 'KUBECONFIG=/home/vboxuser/.kube/config']) {
-                        sh 'kubectl apply -f k8s-deployment.yaml'
-                        sh 'kubectl rollout status deployment/hangman-deployment'
-                    }
+                withEnv(['KUBECONFIG=/home/vboxuser/.kube/config']) {
+                    sh 'kubectl apply -f k8s-deployment.yaml'
+                    sh 'kubectl rollout status deployment/hangman-deployment'
                 }
             }
         }
