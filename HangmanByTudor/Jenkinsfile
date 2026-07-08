@@ -37,7 +37,7 @@ pipeline {
                     // Did so because Jenkins could not see MiniKube
                     sh 'minikube image load hangman-image.tar -p minikube'
             
-                    withEnv(['KUBECONFIG=/var/lib/jenkins/.kube/config']) {
+                withEnv(['MINIKUBE_HOME=/home/vboxuser', 'KUBECONFIG=/home/vboxuser/.kube/config']) {
                         sh 'kubectl apply -f k8s-deployment.yaml'
                         sh 'kubectl rollout status deployment/hangman-deployment'
                     }
