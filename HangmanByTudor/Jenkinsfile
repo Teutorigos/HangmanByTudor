@@ -5,7 +5,8 @@ pipeline {
         SOLUTION_PATH = 'HangmanByTudor/HangmanByTudor.sln'
         DOTNET_ROOT = '/opt/dotnet'
         PATH = "${env.PATH}:/opt/dotnet:/opt/dotnet/tools"
-        KUBECONFIG = "${env.HOME}/.kube/config"
+        KUBECONFIG = "/home/${USER}/.kube/config"
+        MINIKUBE_HOME = "/home/${USER}/.minikube"
     }
 
     stages {
@@ -27,11 +28,10 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    sh 'minikube image load hangman-game:latest'
+                    sh "HOME=/home/${USER} /usr/local/bin/minikube image load hangman-game:latest --profile minikube"
                     
                     sh 'kubectl apply -f k8s-deployment.yaml'
                     sh 'kubectl rollout restart deployment/hangman-deployment'
-                    sh 'kubectl rollout status deployment/hangman-deployment'
                 }
             }
         }
