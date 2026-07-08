@@ -45,8 +45,8 @@ pipeline {
     
     post {
         always {
-            cleanWs()
             junit '**/test-results.xml'
+            cleanWs()
         }
         failure {
             echo 'Build or tests failed. Check logs!'
