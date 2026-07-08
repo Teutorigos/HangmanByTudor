@@ -20,21 +20,22 @@ pipeline {
         stage('Docker Build') { 
             steps {
                 script {
-                    echo 'Building image for local Docker AND Minikube...'
-                    // Local build. To have it in local Docker
                     sh 'docker build -f HangmanByTudor/Dockerfile -t hangman-game:latest .'
-                    
-                    // Build in MiniKube.
-                    sh 'eval $(minikube docker-env) && docker build -f HangmanByTudor/Dockerfile -t hangman-game:latest .'
+                    // save the image in a local file
+                    sh 'docker save hangman-game:latest > hangman-game.tar'
                 }
             }
         }
 
         stage('Deploy to Kubernetes') {
             steps {
-                withEnv(['KUBECONFIG=/home/vboxuser/.kube/config']) {
-                    sh 'kubectl apply -f k8s-deployment.yaml'
-                    sh 'kubectl rollout status deployment/hangman-deployment'
+                script {
+                    sh 'docker load < hangman-game.tar'
+            
+                    withEnv(['KUBECONFIG=/home/vboxuser/.kube/config']) {
+                        sh 'kubectl apply -f k8s-deployment.yaml'
+                        sh 'kubectl rollout status deployment/hangman-deployment'
+                    }
                 }
             }
         }
