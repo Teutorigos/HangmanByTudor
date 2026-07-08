@@ -28,9 +28,11 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    sh 'minikube image load hangman-game:latest --profile minikube'
-                    sh 'kubectl apply -f k8s-deployment.yaml'
-                    sh 'kubectl rollout restart deployment/hangman-deployment'
+                    withEnv(['HOME=/home/jenkins_home']) {
+                        sh 'minikube image load hangman-game:latest --profile minikube'
+                        sh 'kubectl apply -f k8s-deployment.yaml'
+                        sh 'kubectl rollout restart deployment/hangman-deployment'
+                    }
                 }
             }
         }
