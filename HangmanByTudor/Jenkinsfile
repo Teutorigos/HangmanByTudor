@@ -28,10 +28,16 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    sh "HOME=/home/${USER} /usr/local/bin/minikube image load hangman-game:latest --profile minikube"
-                    
-                    sh 'kubectl apply -f k8s-deployment.yaml'
-                    sh 'kubectl rollout restart deployment/hangman-deployment'
+                    // Folosim workspace-ul curent pentru stocarea temporara a configurarii minikube
+                    // Asta evita orice eroare de tip "permission denied" in /home/
+                    withEnv(['MINIKUBE_HOME=' + env.WORKSPACE + '/.minikube']) {
+                        sh 'minikube image load hangman-game:latest --profile minikube'
+                
+                        withEnv(['KUBECONFIG=' + env.WORKSPACE + '/.kube/config']) {
+                            sh 'kubectl apply -f k8s-deployment.yaml'
+                            sh 'kubectl rollout restart deployment/hangman-deployment'
+                        }
+                    }
                 }
             }
         }
