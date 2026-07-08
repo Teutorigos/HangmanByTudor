@@ -25,6 +25,14 @@ pipeline {
                 sh "docker build -f HangmanByTudor/Dockerfile -t hangman-game:latest ."
             }
         }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                echo 'Deploying to Kubernetes cluster...'
+                sh 'kubectl apply -f k8s-deployment.yaml'
+                sh 'kubectl rollout status deployment/hangman-deployment'
+            }
+        }
     }
     
     post {
