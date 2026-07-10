@@ -34,9 +34,10 @@ pipeline {
                     ]) {              
                         // Loading new image
                         sh 'minikube image load hangman-game:${BUILD_NUMBER} --profile minikube'
+                        sh 'kubectl apply -f k8s-deployment.yaml'
                 
                         sh "kubectl set image deployment/hangman-deployment hangman-app=hangman-game:${BUILD_NUMBER}"                      
-                        sh 'kubectl apply -f k8s-deployment.yaml'
+                        sh 'kubectl rollout restart deployment/hangman-deployment'
                     }
                 }
             }
