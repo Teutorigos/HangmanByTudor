@@ -32,7 +32,12 @@ pipeline {
                         "MINIKUBE_HOME=${env.JENKINS_HOME}",
                         "KUBECONFIG=${env.JENKINS_HOME}/.kube/config"
                     ]) {
+                        // Forcing old image out from cache to avoid conflicts
+                        sh 'minikube ssh "docker rmi hangman-game:latest || true"'
+                
+                        // Loading new image
                         sh 'minikube image load hangman-game:latest --profile minikube'
+                
                         sh 'kubectl apply -f k8s-deployment.yaml'
                         sh 'kubectl rollout restart deployment/hangman-deployment'
                     }

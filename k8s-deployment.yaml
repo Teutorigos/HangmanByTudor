@@ -15,7 +15,7 @@ spec:
       containers:
       - name: hangman-app
         image: hangman-game:latest
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
 ---
