@@ -8,6 +8,11 @@ namespace HangmanByTudor.Pages
     public class IndexModel : PageModel
     {
         public GameStateModel Game { get; set; }
+        private readonly ILogger<IndexModel> _logger;
+        public IndexModel(ILogger<IndexModel> logger)
+        {
+            _logger = logger;
+        }
 
         public void OnGet()
         {
@@ -23,6 +28,20 @@ namespace HangmanByTudor.Pages
 
             Game = engine.ProcessGuess(Game, letter);
 
+            if (Game.IsGameOver)
+            {
+                _logger.LogInformation("Game ended");
+
+                if (Game.IsWinner)
+                {
+                    _logger.LogInformation("You won!");
+                }
+                else
+                {
+                    _logger.LogInformation("You lost!");
+                }
+            }
+
             HttpContext.Session.SetJson("Game", Game);
 
             return Page();
@@ -30,6 +49,7 @@ namespace HangmanByTudor.Pages
 
         private GameStateModel NewGame() {
             // Define your word list
+            _logger.LogInformation("New Game");
             string filePath = Path.Combine(AppContext.BaseDirectory, "Data", "words.txt");
             var words = System.IO.File.ReadAllLines(filePath).ToList();
             var random = new Random();
@@ -52,6 +72,7 @@ namespace HangmanByTudor.Pages
         {
             // Remove the current game state from the session
             HttpContext.Session.Remove("Game");
+            _logger.LogInformation("Game Reset");
 
             // Redirect back to the Index page to start fresh
             return RedirectToPage("Index");
