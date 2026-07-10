@@ -5,6 +5,8 @@
 }
 
 <h1>Hangman</h1>
+<script>console.log("Game Started!");</script>
+
 
 <div style="font-size: 2em; letter-spacing: 10px; margin: 20px 0;">
     @foreach (char c in Model.Game.SecretWord)
@@ -19,7 +21,7 @@
     @for (char c = 'A'; c <= 'Z'; c++)
     {
         <button type="submit" name="letter" value="@c"
-                disabled="@(Model.Game.GuessedLetters.Contains(c) || Model.Game.IsGameOver)">
+        disabled="@(Model.Game.GuessedLetters.Contains(c) || Model.Game.IsGameOver)">
             @c
         </button>
     }
@@ -28,6 +30,14 @@
 @if (Model.Game.IsGameOver)
 {
     <h2>@(Model.Game.IsWinner ? "You Won!" : "Game Over!")</h2>
+    @if (Model.Game.IsWinner)
+    {
+        <script>console.log("You Won!");</script>
+    }
+    else
+    {
+        <script>console.log("Game Over!");</script>
+    }
     <form method="post" asp-page-handler="Reset">
         <button type="submit" class="btn btn-primary">Play Again</button>
     </form>
