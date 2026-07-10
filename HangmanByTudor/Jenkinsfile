@@ -29,8 +29,8 @@ pipeline {
             steps {
                 script {
                     withEnv([
-                        'MINIKUBE_HOME=/home/jenkins_home',
-                        'KUBECONFIG=/home/jenkins_home/.kube/config'
+                        "MINIKUBE_HOME=${env.JENKINS_HOME}",
+                        "KUBECONFIG=${env.JENKINS_HOME}/.kube/config"
                     ]) {
                         sh 'minikube image load hangman-game:latest --profile minikube'
                         sh 'kubectl apply -f k8s-deployment.yaml'
