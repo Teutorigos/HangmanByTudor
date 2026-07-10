@@ -21,7 +21,7 @@ pipeline {
         
         stage('Docker Build') { 
             steps {
-                sh 'docker build -f HangmanByTudor/Dockerfile -t hangman-game:latest .'
+                sh 'docker build --no-cache -f HangmanByTudor/Dockerfile -t hangman-game:latest .'
             }
         }
 
@@ -33,7 +33,7 @@ pipeline {
                         "KUBECONFIG=${env.JENKINS_HOME}/.kube/config"
                     ]) {
                         // Forcing old image out from cache to avoid conflicts
-                        sh 'minikube ssh "docker rmi hangman-game:latest || true"'
+                        sh 'minikube image rm hangman-game:latest || true'
                 
                         // Loading new image
                         sh 'minikube image load hangman-game:latest --profile minikube'
