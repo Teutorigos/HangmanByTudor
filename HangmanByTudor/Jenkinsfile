@@ -32,10 +32,10 @@ pipeline {
                         "MINIKUBE_HOME=${env.JENKINS_HOME}",
                         "KUBECONFIG=${env.JENKINS_HOME}/.kube/config"
                     ]) {              
-                        // Loading new image
+                        // Loading new image - forcing last image created in the previous stage to run in the cluster
                         sh 'minikube image load hangman-game:${BUILD_NUMBER} --profile minikube'
                         sh 'kubectl apply -f k8s-deployment.yaml'
-                
+                        // Updating image in deployment, changing hangman-app with the new version
                         sh "kubectl set image deployment/hangman-deployment hangman-app=hangman-game:${BUILD_NUMBER}"                      
                         sh 'kubectl rollout restart deployment/hangman-deployment'
                     }
